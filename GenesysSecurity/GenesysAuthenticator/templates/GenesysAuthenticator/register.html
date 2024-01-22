@@ -1,0 +1,22 @@
+<!-- registration/register.html -->
+{% extends 'base/base.html' %}
+
+{% block content %}
+  <div class="container mt-5">
+    <div class="col-md-6 offset-md-3">
+      <div class="card">
+        <img src="https://images.pexels.com/photos/1051077/pexels-photo-1051077.jpeg?auto=compress&cs=tinysrgb&w=600" class="card-img" alt="GIS Map Background" style="background-size: cover; height: 100%; width: 100%;">
+
+        <div class="card-img-overlay d-flex justify-content-center align-items-center">
+          <form method="post" action="{% url 'register' %}" class="form" style="background-color: rgba(0, 0, 0, 0.6); padding: 20px; border-radius: 10px; color: white; text-align: center;">
+            <h2 class="text-white mb-4"><b>Register</b></h2>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn" style="background-color: #000; color: #fff; border: 1px solid #ccc;">Register</button> <br>
+            <p>If you're already registered, please <a href="{% url 'login' %}" style="color: yellow;"><b>Go to login</b></a>.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

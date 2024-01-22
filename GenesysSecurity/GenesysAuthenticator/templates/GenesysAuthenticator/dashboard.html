@@ -1,0 +1,24 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">Welcome to Genesys Dashboard</h1>
+                <p class="card-text">If you need access to a particular schema, please request permission from your Team Lead (TL).</p>
+
+                <div class="request-access mt-4">
+                    <h5 class="card-subtitle mb-2">Request Schema Access:</h5>
+                    <form action="/submit_request" method="post">
+                        <div class="form-group">
+                            <label for="schema">Schema Name:</label>
+                            <input type="text" class="form-control" id="schema" name="schema" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Request Access</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
