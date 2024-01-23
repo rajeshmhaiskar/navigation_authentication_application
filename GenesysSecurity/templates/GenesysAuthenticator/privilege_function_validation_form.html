@@ -1,0 +1,67 @@
+<!-- privilege_function_validation_create.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Privilege Function Validation</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        function load_schemas() {
+            var selected_database = $('#id_database').val();
+            $.get('/get_schemas/', {database_id: selected_database}, function(data) {
+                var schemaDropdown = $('#id_schema');
+                schemaDropdown.empty();
+                schemaDropdown.append('<option value="" selected="selected">---------</option>');
+                $.each(data, function(index, item) {
+                    schemaDropdown.append($('<option>', {
+                        value: item.id,
+                        text: item.schema
+                    }));
+                });
+            });
+        }
+
+        function load_tables() {
+            var selected_schema = $('#id_schema').val();
+            $.get('/get_tables/', {schema_id: selected_schema}, function(data) {
+                var tableDropdown = $('#id_table');
+                tableDropdown.empty();
+                tableDropdown.append('<option value="" selected="selected">---------</option>');
+                $.each(data, function(index, item) {
+                    tableDropdown.append($('<option>', {
+                        value: item.id,
+                        text: item.table_name
+                    }));
+                });
+            });
+        }
+
+        function load_columns() {
+            var selected_table = $('#id_table').val();
+            $.get('/get_columns/', {table_id: selected_table}, function(data) {
+                var columnDropdown = $('#id_columns');
+                columnDropdown.empty();
+                columnDropdown.append('<option value="" selected="selected">---------</option>');
+                $.each(data.columns, function(index, item) {
+                    columnDropdown.append($('<option>', {
+                        value: item,
+                        text: item
+                    }));
+                });
+            });
+        }
+    </script>
+</head>
+<body>
+
+<h1>Cascading Dropdown Example</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <br><br>
+    <input type="submit" value="Submit">
+</form>
+
+</body>
+</html>

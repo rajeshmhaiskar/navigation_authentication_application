@@ -78,25 +78,6 @@ def dashboard(request):
     return render(request, 'GenesysAuthenticator/dashboard.html')
 
 
-#
-# def get_user_emp_id(user_email):
-#     try:
-#         user_details = UserDetails.objects.get(email=user_email)
-#         return user_details.emp_id
-#     except UserDetails.DoesNotExist:
-#         return None  # Return None if the user doesn't exist
-#
-#
-# # def get_schema_names(schema_ids):
-# #     try:
-# #         # Retrieve schema names based on schema IDs
-# #         schema_names = MasterDatabaseSchema.objects.filter(id__in=schema_ids).values_list('name', flat=True)
-# #         return list(schema_names)
-# #     except MasterDatabaseSchema.DoesNotExist:
-# #         # Handle the case where one or more schema IDs do not exist
-# #         return []
-#
-#
 @login_required
 @designation_required('Senior Vice President - Projects', 'Vice President', 'General Manager Projects',
                       'Senior Project Manager', 'Program Manager', 'Manager')
@@ -253,35 +234,53 @@ def grant_privileges_function_validation_view(request):
     return render(request, 'GenesysAuthenticator/privilege_function_validation_form.html', context)
 
 
-def get_schemas_for_database(request):
+# def get_schemas_for_database(request):
+#     database_id = request.GET.get('database_id')
+#
+#     # Fetch schemas based on the selected database
+#     schemas = MasterDatabaseSchema.objects.filter(database_id=database_id)
+#
+#     # Create a list of dictionaries for the dropdown options
+#     schema_options = [{'id': schema.id, 'name': schema.schema} for schema in schemas]
+#
+#     return JsonResponse({'schemas': schema_options})
+#
+#
+# def get_tables_for_schema(request):
+#     schema_id = request.GET.get('schema_id')
+#
+#     # Fetch tables based on the selected schema
+#     tables = DatabaseTable.objects.filter(schema_id=schema_id)
+#
+#     # Create a list of dictionaries for the dropdown options
+#     table_options = [{'id': table.id, 'name': table.table_name} for table in tables]
+#
+#     return JsonResponse({'tables': table_options})
+#
+#
+# def get_columns_for_table(request):
+#     table_id = request.GET.get('table_id')
+#
+#     # Fetch columns based on the selected table
+#     table = DatabaseTable.objects.get(pk=table_id)
+#     columns = table.columns.split(',')
+#
+#     return JsonResponse({'columns': columns})
+
+
+def get_schemas(request):
     database_id = request.GET.get('database_id')
-
-    # Fetch schemas based on the selected database
-    schemas = MasterDatabaseSchema.objects.filter(database_id=database_id)
-
-    # Create a list of dictionaries for the dropdown options
-    schema_options = [{'id': schema.id, 'name': schema.schema} for schema in schemas]
-
-    return JsonResponse({'schemas': schema_options})
+    schemas = MasterDatabaseSchema.objects.filter(database_id=database_id, is_active=True).values('id', 'schema')
+    return JsonResponse(list(schemas), safe=False)
 
 
-def get_tables_for_schema(request):
+def get_tables(request):
     schema_id = request.GET.get('schema_id')
-
-    # Fetch tables based on the selected schema
-    tables = DatabaseTable.objects.filter(schema_id=schema_id)
-
-    # Create a list of dictionaries for the dropdown options
-    table_options = [{'id': table.id, 'name': table.table_name} for table in tables]
-
-    return JsonResponse({'tables': table_options})
+    tables = DatabaseTable.objects.filter(schema_id=schema_id).values('id', 'table_name')
+    return JsonResponse(list(tables), safe=False)
 
 
-def get_columns_for_table(request):
+def get_columns(request):
     table_id = request.GET.get('table_id')
-
-    # Fetch columns based on the selected table
-    table = DatabaseTable.objects.get(pk=table_id)
-    columns = table.columns.split(',')
-
+    columns = DatabaseTable.objects.get(id=table_id).columns
     return JsonResponse({'columns': columns})

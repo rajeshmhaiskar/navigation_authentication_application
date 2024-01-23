@@ -59,29 +59,51 @@ class GrantPermissionForm(forms.ModelForm):
         super(GrantPermissionForm, self).__init__(*args, **kwargs)
 
 
+# class PrivilegeFunctionValidationForm(forms.ModelForm):
+#     class Meta:
+#         model = PrivilegeFunctionValidation
+#         fields = ['database', 'schema', 'table', 'columns', 'privilege_function_validation']
+#         labels = {
+#             'database': 'Select Database',
+#             'schema': 'Select Schema',
+#             'table': 'Select Table',
+#             'columns': 'Select Column',
+#             'privilege_function_validation': 'Enable Privilege Function Validation',
+#         }
+#         widgets = {
+#             'columns': forms.TextInput(attrs={'class': 'columns-input'}),  # Change to TextInput
+#             'privilege_function_validation': forms.CheckboxInput(),
+#         }
+#
+#     def __init__(self, *args, **kwargs):
+#         super(PrivilegeFunctionValidationForm, self).__init__(*args, **kwargs)
+#
+#         # Make the 'schema', 'table', and 'columns' fields initially empty
+#         self.fields['schema'].queryset = MasterDatabaseSchema.objects.none()
+#         self.fields['table'].queryset = DatabaseTable.objects.none()
+#
+#         # Fetch the column names passed from the view and update the 'columns' field
+#         column_names = kwargs.get('column_names', [])
+#         self.fields['columns'].widget.attrs['list'] = 'column_list'
+
+
 class PrivilegeFunctionValidationForm(forms.ModelForm):
     class Meta:
         model = PrivilegeFunctionValidation
-        fields = ['database', 'schema', 'table', 'columns', 'privilege_function_validation']
-        labels = {
-            'database': 'Select Database',
-            'schema': 'Select Schema',
-            'table': 'Select Table',
-            'columns': 'Select Column',
-            'privilege_function_validation': 'Enable Privilege Function Validation',
-        }
-        widgets = {
-            'columns': forms.TextInput(attrs={'class': 'columns-input'}),  # Change to TextInput
-            'privilege_function_validation': forms.CheckboxInput(),
-        }
+        fields = '__all__'
+
+    columns = forms.CharField(max_length=255, required=False, widget=forms.Select(attrs={'class': 'form-control'}))
 
     def __init__(self, *args, **kwargs):
-        super(PrivilegeFunctionValidationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
-        # Make the 'schema', 'table', and 'columns' fields initially empty
-        self.fields['schema'].queryset = MasterDatabaseSchema.objects.none()
-        self.fields['table'].queryset = DatabaseTable.objects.none()
+        # Set initial choices for the dropdowns (subject to change dynamically)
+        self.fields['database'].queryset = MasterDatabase.objects.filter(is_active=True)
+        self.fields['schema'].queryset = MasterDatabaseSchema.objects.filter(is_active=True)
+        self.fields['table'].queryset = DatabaseTable.objects.all()
+        self.fields['columns'].queryset = []  # Initial empty queryset for columns
 
-        # Fetch the column names passed from the view and update the 'columns' field
-        column_names = kwargs.get('column_names', [])
-        self.fields['columns'].widget.attrs['list'] = 'column_list'
+        # Add JavaScript event attributes to trigger AJAX requests
+        self.fields['database'].widget.attrs['onchange'] = 'load_schemas()'
+        self.fields['schema'].widget.attrs['onchange'] = 'load_tables()'
+        self.fields['table'].widget.attrs['onchange'] = 'load_columns()'
