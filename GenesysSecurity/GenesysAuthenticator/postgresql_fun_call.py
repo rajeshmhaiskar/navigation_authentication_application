@@ -88,8 +88,7 @@ def grant_database_privileges(user, schema_names, database_name, func_n,
         return f'Error: {e}'
 
 
-def grant_function_validation_privileges(user, schema_name, table_name, column_name, privilege_function_validation,
-                                         array_list, database_name):
+def grant_function_validation_privileges(user, schema_name, table_name, column_name, database_name):
     try:
         try:
             master_db = MasterDatabase.objects.get(database_name=database_name, is_active=True)
@@ -97,7 +96,7 @@ def grant_function_validation_privileges(user, schema_name, table_name, column_n
             raise Http404("MasterDatabase not found with the given conditions.")
 
         # Get the emp_id from the user
-        # user_emp_id = user.emp_id
+        user = user.emp_id
 
         # Extract relevant fields from MasterDatabase
         db_name = master_db.database_name
@@ -120,7 +119,7 @@ def grant_function_validation_privileges(user, schema_name, table_name, column_n
 
         # Call the PostgreSQL function
         cursor.callproc('valid_func',
-                        [user, schema_name, table_name, column_name, privilege_function_validation, array_list, ])
+                        [user, schema_name, table_name, column_name ])
 
         # Commit the changes to the database
         connection.commit()

@@ -90,7 +90,7 @@ class GrantPermissionForm(forms.ModelForm):
 class PrivilegeFunctionValidationForm(forms.ModelForm):
     class Meta:
         model = PrivilegeFunctionValidation
-        fields = '__all__'
+        fields = ['database', 'schema', 'table', 'columns', 'privilege_function_validation']
 
     columns = forms.CharField(max_length=255, required=False, widget=forms.Select(attrs={'class': 'form-control'}))
 

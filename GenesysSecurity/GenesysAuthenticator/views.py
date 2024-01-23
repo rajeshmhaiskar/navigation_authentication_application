@@ -11,6 +11,7 @@ from .custom_decorator import designation_required
 from django.shortcuts import render, redirect
 from .get_schema_table_column import get_remote_schemas_tables_columns, save_to_local_database
 from django.http import Http404, JsonResponse
+import json
 
 
 def login_view(request):
@@ -175,30 +176,35 @@ def grant_privileges_function_validation_view(request):
         all_columns.update(table.columns.split(','))
 
     if request.method == 'POST':
+        print(request.POST)
+        database_id = request.POST.get('database')
+        schema_id = request.POST.get('schema')
+        table_id = request.POST.get('table')
         form = PrivilegeFunctionValidationForm(request.POST)
         if form.is_valid():
             privilege_validation_instance = form.save(commit=False)
             privilege_validation_instance.granted_by = request.user
 
-            try:
-                privilege_validation_instance.save()
-            except IntegrityError as e:
-                print(f"IntegrityError: {e}")
-                # Handle the integrity error as needed, e.g., redirect to an error page
+            # try:
+            #     privilege_validation_instance.save()
+            # except IntegrityError as e:
+            #     print(f"IntegrityError: {e}")
 
-            # Rest of your code...
 
             user = request.user
-
-            # Call the second function with extracted values
+            database_name = MasterDatabase.objects.get(id=database_id).database_name
+            schema_name = MasterDatabaseSchema.objects.get(id=schema_id).schema
+            table_name = DatabaseTable.objects.get(id=table_id).table_name
+            column_name = request.POST.get('columns')
+            # privilege_function_validation = request.POST.get('privilege_function_validation')
+            # Call the second function with stored values
             result = grant_function_validation_privileges(
                 user,
-                privilege_validation_instance.schema.schema,
-                privilege_validation_instance.table.table_name,
-                None,
-                privilege_validation_instance.privilege_function_validation,
-                privilege_validation_instance.table.columns.split(','),  # Columns from the form
-                privilege_validation_instance.database.database_name
+                schema_name,
+                table_name,
+                column_name,
+                # privilege_function_validation,
+                database_name,
             )
 
             # Create or update an entry in the SchemaAccess table
@@ -234,40 +240,6 @@ def grant_privileges_function_validation_view(request):
     return render(request, 'GenesysAuthenticator/privilege_function_validation_form.html', context)
 
 
-# def get_schemas_for_database(request):
-#     database_id = request.GET.get('database_id')
-#
-#     # Fetch schemas based on the selected database
-#     schemas = MasterDatabaseSchema.objects.filter(database_id=database_id)
-#
-#     # Create a list of dictionaries for the dropdown options
-#     schema_options = [{'id': schema.id, 'name': schema.schema} for schema in schemas]
-#
-#     return JsonResponse({'schemas': schema_options})
-#
-#
-# def get_tables_for_schema(request):
-#     schema_id = request.GET.get('schema_id')
-#
-#     # Fetch tables based on the selected schema
-#     tables = DatabaseTable.objects.filter(schema_id=schema_id)
-#
-#     # Create a list of dictionaries for the dropdown options
-#     table_options = [{'id': table.id, 'name': table.table_name} for table in tables]
-#
-#     return JsonResponse({'tables': table_options})
-#
-#
-# def get_columns_for_table(request):
-#     table_id = request.GET.get('table_id')
-#
-#     # Fetch columns based on the selected table
-#     table = DatabaseTable.objects.get(pk=table_id)
-#     columns = table.columns.split(',')
-#
-#     return JsonResponse({'columns': columns})
-
-
 def get_schemas(request):
     database_id = request.GET.get('database_id')
     schemas = MasterDatabaseSchema.objects.filter(database_id=database_id, is_active=True).values('id', 'schema')
@@ -283,4 +255,4 @@ def get_tables(request):
 def get_columns(request):
     table_id = request.GET.get('table_id')
     columns = DatabaseTable.objects.get(id=table_id).columns
-    return JsonResponse({'columns': columns})
+    return JsonResponse({'columns': json.loads(columns)})
