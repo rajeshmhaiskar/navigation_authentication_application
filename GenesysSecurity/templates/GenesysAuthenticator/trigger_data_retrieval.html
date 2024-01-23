@@ -1,4 +1,3 @@
-
 {% extends 'base/base.html' %}
 
 {% block content %}
@@ -9,11 +8,11 @@
         <img src="https://images.pexels.com/photos/1051077/pexels-photo-1051077.jpeg?auto=compress&cs=tinysrgb&w=600" class="card-img" alt="GIS Map Background" style="background-size: cover; height: 100%; width: 100%;">
 
         <div class="card-img-overlay d-flex justify-content-center align-items-center">
-          <form method="post"  action="{% url 'grant_validation' %}" class="form" style="background-color: rgba(0, 0, 0, 0.6); padding: 20px; border-radius: 10px; color: white; text-align: center;">
-            <h2 class="text-white mb-4"><b>Grant pre-villages validation</b></h2>
+          <form method="post" action="{% url 'trigger_data_retrieval' %}" class="form" style="background-color: rgba(0, 0, 0, 0.6); padding: 20px; border-radius: 10px; color: white; text-align: center;">
+            <h2 class="text-white mb-4"><b>Get Data from server</b></h2>
             {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn" style="background-color: #000; color: #fff; border: 1px solid #ccc;">validate</button> <br> <br>
+            <button type="submit" class="btn" style="background-color: #000; color: #fff; border: 1px solid #ccc;">Trigger Data Retrieval</button> <br>
+          <p>If you're done with data retrieval, please <a href="{% url 'dashboard' %}" style="color: yellow;"><b>go to Dashboard</b></a>.</p>
 
           </form>
         </div>
@@ -21,6 +20,3 @@
     </div>
   </div>
 {% endblock %}
-
-
-

@@ -12,6 +12,9 @@ from django.shortcuts import render, redirect
 from .get_schema_table_column import get_remote_schemas_tables_columns, save_to_local_database
 from django.http import Http404, JsonResponse
 import json
+from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView
+from django.utils.decorators import method_decorator
+from django.urls import reverse_lazy
 
 
 def login_view(request):
@@ -75,6 +78,16 @@ def registration_view(request):
     return render(request, 'GenesysAuthenticator/register.html', {'form': form})
 
 
+@method_decorator(login_required, name='dispatch')
+class CustomPasswordChangeView(PasswordChangeView):
+    template_name = 'GenesysAuthenticator/change_password.html'
+    success_url = reverse_lazy('password_change_done')
+
+
+class CustomPasswordChangeDoneView(PasswordChangeDoneView):
+    template_name = 'GenesysAuthenticator/password_change_done.html'
+
+
 def dashboard(request):
     return render(request, 'GenesysAuthenticator/dashboard.html')
 
@@ -130,7 +143,7 @@ def grant_permission(request):
     return render(request, 'GenesysAuthenticator/database_permission_form.html', {'form': form})
 
 
-def get_data_for_server(database, databases_for_server):
+def get_data_for_server(database):
     try:
         master_db = MasterDatabase.objects.get(database_name=database, is_active=True)
     except MasterDatabase.DoesNotExist:
@@ -153,23 +166,32 @@ def get_data_for_server(database, databases_for_server):
     return remote_database, get_remote_schemas_tables_columns(remote_db_params)
 
 
+@login_required
 def get_schema_table_col_from_server(request):
-    remote_databases = MasterDatabase.objects.values_list('database_name', flat=True).distinct()
+    if request.method == 'POST':
+        remote_databases = MasterDatabase.objects.values_list('database_name', flat=True).distinct()
 
-    databases_for_server1 = ["Highfidelity", "poi_core", "WoNoRoadNetwork"]
-    databases_for_server2 = ["xyz", "abcd", "db_fight"]
+        databases_for_server1 = ["Highfidelity", "poi_core", "WoNoRoadNetwork"]
+        databases_for_server2 = ["xyz", "abcd", "db_fight"]
 
-    for database in remote_databases:
-        if database in databases_for_server1 or database in databases_for_server2:
-            remote_database, data = get_data_for_server(database, databases_for_server1 + databases_for_server2)
-            save_to_local_database(remote_database, data)
-        else:
-            print("Error: Unsupported database")
+        for database in remote_databases:
+            if database in databases_for_server1 or database in databases_for_server2:
+                remote_database, data = get_data_for_server(database, databases_for_server1 + databases_for_server2)
+                save_to_local_database(remote_database, data)
+            else:
+                print("Error: Unsupported database")
 
-    print("Data retrieval and saving to local database complete.")
-    return render(request, 'GenesysAuthenticator/dashboard.html')
+        print("Data retrieval and saving to local database complete.")
+
+        # Redirect to the dashboard after successful data retrieval
+        return redirect('dashboard')  # Replace 'dashboard' with the actual name or URL of your dashboard view
+
+    return render(request, 'GenesysAuthenticator/trigger_data_retrieval.html')
 
 
+@login_required
+@designation_required('Senior Vice President - Projects', 'Vice President', 'General Manager Projects',
+                      'Senior Project Manager', 'Program Manager', 'Manager')
 def grant_privileges_function_validation_view(request):
     all_columns = set()
     for table in DatabaseTable.objects.all():
@@ -189,7 +211,6 @@ def grant_privileges_function_validation_view(request):
             #     privilege_validation_instance.save()
             # except IntegrityError as e:
             #     print(f"IntegrityError: {e}")
-
 
             user = request.user
             database_name = MasterDatabase.objects.get(id=database_id).database_name

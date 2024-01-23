@@ -44,6 +44,8 @@ class RegistrationForm(UserCreationForm):
         return user
 
 
+
+
 class GrantPermissionForm(forms.ModelForm):
     user = forms.ModelChoiceField(queryset=UserDetails.objects.all(), required=True)
     database = forms.ModelChoiceField(queryset=MasterDatabase.objects.all(), required=True)
@@ -57,34 +59,6 @@ class GrantPermissionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(GrantPermissionForm, self).__init__(*args, **kwargs)
-
-
-# class PrivilegeFunctionValidationForm(forms.ModelForm):
-#     class Meta:
-#         model = PrivilegeFunctionValidation
-#         fields = ['database', 'schema', 'table', 'columns', 'privilege_function_validation']
-#         labels = {
-#             'database': 'Select Database',
-#             'schema': 'Select Schema',
-#             'table': 'Select Table',
-#             'columns': 'Select Column',
-#             'privilege_function_validation': 'Enable Privilege Function Validation',
-#         }
-#         widgets = {
-#             'columns': forms.TextInput(attrs={'class': 'columns-input'}),  # Change to TextInput
-#             'privilege_function_validation': forms.CheckboxInput(),
-#         }
-#
-#     def __init__(self, *args, **kwargs):
-#         super(PrivilegeFunctionValidationForm, self).__init__(*args, **kwargs)
-#
-#         # Make the 'schema', 'table', and 'columns' fields initially empty
-#         self.fields['schema'].queryset = MasterDatabaseSchema.objects.none()
-#         self.fields['table'].queryset = DatabaseTable.objects.none()
-#
-#         # Fetch the column names passed from the view and update the 'columns' field
-#         column_names = kwargs.get('column_names', [])
-#         self.fields['columns'].widget.attrs['list'] = 'column_list'
 
 
 class PrivilegeFunctionValidationForm(forms.ModelForm):
