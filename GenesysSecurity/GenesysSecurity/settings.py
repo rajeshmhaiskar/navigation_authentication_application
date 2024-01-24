@@ -38,7 +38,7 @@ CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_HEADERS = ['*']
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 
-AUTH_USER_MODEL = 'GenesysAuthenticator.UserDetails'
+AUTH_USER_MODEL = 'GenesysUserApp.UserDetails'
 # Application definition
 
 DEFAULT_APPS = [
@@ -50,10 +50,12 @@ DEFAULT_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
 
+
 ]
 
 CUSTOM_APPS = [
     'GenesysAuthenticator',
+    'GenesysUserApp',
 ]
 
 THIRD_PARTY_APPS = [
@@ -107,7 +109,7 @@ WSGI_APPLICATION = 'GenesysSecurity.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'navigation_product_authentication1',
+        'NAME': 'navigation_product_authentication2',
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost',

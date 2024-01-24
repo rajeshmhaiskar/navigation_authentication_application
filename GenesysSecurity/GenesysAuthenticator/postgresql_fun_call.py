@@ -11,10 +11,12 @@ def create_user_in_database(username, password, db_server, db_port, db_username,
         'password': db_password,
         'port': db_port,
     }
-
+    procedure_name = 'create_user_with_password'
+    schema_name = 'administrative_utility'
     try:
         with psycopg2.connect(**connection_params) as conn, conn.cursor() as cursor:
-            cursor.callproc('create_user_with_password', (username, password))
+            cursor.callproc(f'{schema_name}.{procedure_name}', (username, password))
+            # cursor.callproc('create_user_with_password', (username, password))
             conn.commit()
             print(f"User created successfully in {database.database_name} on server {db_server}!")
     except Exception as e:
@@ -27,14 +29,14 @@ def create_user_condition_check_validations(username, password, database):
     db_username = database.username
     db_password = database.password
 
-    databases_for_server1 = ["Highfidelity", "poi_core", "WoNoRoadNetwork"]
+    databases_for_server1 = ["highfidelity", "poi_core", "WoNoRoadNetwork"]
     databases_for_server2 = ["nmmc", "adas", "innomap"]
 
     # Connect to the specified database
     if db_server == "127.0.0.1" and database.database_name in databases_for_server1:
         create_user_in_database(username, password, db_server, db_port, db_username, db_password, database)
 
-    elif db_server == "172.0.0.1" and database.database_name in databases_for_server2:
+    elif db_server == "172.16.1.1" and database.database_name in databases_for_server2:
         create_user_in_database(username, password, db_server, db_port, db_username, db_password, database)
 
 
@@ -71,9 +73,17 @@ def grant_database_privileges(user, schema_names, database_name, func_n,
         cursor = connection.cursor()
 
         # Call the PostgreSQL function
-        cursor.callproc('grant_privs', [user_emp_id, db_name, func_n,
-                                        db_access, privilege_select, privilege_insert,
-                                        privilege_update, privilege_delete, privilege_sequence, schema_names])
+        # cursor.callproc('grant_privs', [user_emp_id, db_name, func_n,
+        #                                 db_access, privilege_select, privilege_insert,
+        #                                 privilege_update, privilege_delete, privilege_sequence, schema_names])
+
+        procedure_name = 'grant_privs'
+        schema_name = 'administrative_utility'
+
+        cursor.callproc(f'{schema_name}.{procedure_name}', [user_emp_id, db_name, func_n,
+                                                            db_access, privilege_select, privilege_insert,
+                                                            privilege_update, privilege_delete, privilege_sequence,
+                                                            schema_names])
 
         # Commit the changes to the database
         connection.commit()
@@ -117,9 +127,13 @@ def grant_function_validation_privileges(user, schema_name, table_name, column_n
         # Create a cursor object to interact with the database
         cursor = connection.cursor()
 
-        # Call the PostgreSQL function
-        cursor.callproc('valid_func',
-                        [user, schema_name, table_name, column_name ])
+        # # Call the PostgreSQL function
+        # cursor.callproc('valid_func',
+        #                 [user, schema_name, table_name, column_name])
+
+        procedure_name = 'valid_func'
+        cursor.callproc(f'{schema_name}.{procedure_name}',
+                        [user, schema_name, table_name, column_name])
 
         # Commit the changes to the database
         connection.commit()

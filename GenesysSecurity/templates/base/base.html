@@ -16,7 +16,7 @@
     <script>
         function load_schemas() {
             var selected_database = $('#id_database').val();
-            $.get('/get_schemas/', {database_id: selected_database}, function(data) {
+            $.get('/main/get_schemas/', {database_id: selected_database}, function(data) {
                 var schemaDropdown = $('#id_schema');
                 schemaDropdown.empty();
                 schemaDropdown.append('<option value="" selected="selected">---------</option>');
@@ -31,7 +31,7 @@
 
         function load_tables() {
             var selected_schema = $('#id_schema').val();
-            $.get('/get_tables/', {schema_id: selected_schema}, function(data) {
+            $.get('/main/get_tables/', {schema_id: selected_schema}, function(data) {
                 var tableDropdown = $('#id_table');
                 tableDropdown.empty();
                 tableDropdown.append('<option value="" selected="selected">---------</option>');
@@ -46,7 +46,7 @@
 
         function load_columns() {
             var selected_table = $('#id_table').val();
-            $.get('/get_columns/', {table_id: selected_table}, function(data) {
+            $.get('/main/get_columns/', {table_id: selected_table}, function(data) {
                 var columnDropdown = $('#id_columns');
                 columnDropdown.empty();
                 columnDropdown.append('<option value="" selected="selected">---------</option>');
@@ -85,6 +85,7 @@
                             <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
                                 <li><a class="dropdown-item" href="{% url 'create_database_permission'%}">Grant_permission</a></li>
                                 <li><a class="dropdown-item" href="{% url 'grant_validation'%}">grant_privileges_function_validation</a></li>
+                                <li><a class="dropdown-item" href="{% url 'trigger_data_retrieval'%}">trigger_data_retrieval</a></li
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{% url 'change_password' %}">change_password</a></li>
                             </ul>
