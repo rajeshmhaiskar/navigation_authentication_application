@@ -4,6 +4,9 @@ from .models import MasterDatabase
 
 
 def create_user_in_database(username, password, db_server, db_port, db_username, db_password, database):
+    """
+       Creates a user in the specified PostgresSQL database.
+    """
     connection_params = {
         'host': db_server,
         'database': database.database_name,
@@ -24,6 +27,9 @@ def create_user_in_database(username, password, db_server, db_port, db_username,
 
 
 def create_user_condition_check_validations(username, password, database):
+    """
+       Checks conditions and creates a user in the specified PostgresSQL database if conditions are met.
+    """
     db_server = database.server_ip
     db_port = database.port
     db_username = database.username
@@ -44,6 +50,9 @@ def grant_database_privileges(user, schema_names, database_name, func_n,
                               db_access=False, privilege_select=False, privilege_insert=False,
                               privilege_update=False, privilege_delete=False, privilege_sequence=False,
                               ):
+    """
+       Grants database privileges to the specified user for a specific function in PostgresSQL.
+    """
     try:
         try:
             master_db = MasterDatabase.objects.get(database_name=database_name, is_active=True)
@@ -99,16 +108,18 @@ def grant_database_privileges(user, schema_names, database_name, func_n,
 
 
 def grant_function_validation_privileges(user, schema_name, table_name, column_name, database_name):
+    """
+       Grants function validation privileges to the specified schema, table ,columns  in PostgresSQL.
+
+    """
     try:
         try:
             master_db = MasterDatabase.objects.get(database_name=database_name, is_active=True)
         except MasterDatabase.DoesNotExist:
             raise Http404("MasterDatabase not found with the given conditions.")
 
-        # Get the emp_id from the user
         user = user.emp_id
 
-        # Extract relevant fields from MasterDatabase
         db_name = master_db.database_name
         username = master_db.username
         password = master_db.password
@@ -127,7 +138,7 @@ def grant_function_validation_privileges(user, schema_name, table_name, column_n
         # Create a cursor object to interact with the database
         cursor = connection.cursor()
 
-        # # Call the PostgreSQL function
+        # Call the PostgresSQL function
         # cursor.callproc('valid_func',
         #                 [user, schema_name, table_name, column_name])
 

@@ -11,8 +11,12 @@ admin.site.register(MasterDatabase, MasterDatabaseAdmin)
 
 
 class UserDetailsAdmin(admin.ModelAdmin):
-    list_display = ('emp_id', 'email', 'designation', 'is_active', 'has_resigned', 'display_selected_databases')
+    list_display = (
+        'emp_id', 'email', 'designation', 'is_active', 'has_resigned', 'display_selected_databases'
+    )
     search_fields = ('emp_id', 'email')
+    list_filter = ('designation', 'is_active', 'has_resigned')
+    filter_horizontal = ('selected_databases',)
 
     def display_selected_databases(self, obj):
         return ", ".join([db.database_name for db in obj.selected_databases.all()])

@@ -1,24 +1,70 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
+<style>body{
+  margin: 0;
+  background:#eee;
+  height:auto;
+}
+h1 {
+  font-weight: 400;
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  margin: 0;
+}
 
-<div class="container mt-5">
-        <div class="card">
-            <div class="card-body">
-                <h1 class="card-title">Welcome to Genesys Dashboard</h1>
-                <p class="card-text">If you need access to a particular schema, please request permission from your Team Lead (TL).</p>
+h3 {
+  font-weight: 400;
+  font-size: 1.2rem;
+  text-transform: capitalize;
+  margin: 0;
+}
 
-                <div class="request-access mt-4">
-                    <h5 class="card-subtitle mb-2">Request Schema Access:</h5>
-                    <form action="/submit_request" method="post">
-                        <div class="form-group">
-                            <label for="schema">Schema Name:</label>
-                            <input type="text" class="form-control" id="schema" name="schema" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Request Access</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+main{
+  max-width:900px;
+
+  margin:0 auto;
+
+}
+
+.landing-page{
+  display:flex;
+  height:100vh;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+ background:url('https://images.pexels.com/photos/6804581/pexels-photo-6804581.jpeg?auto=compress&cs=tinysrgb&w=600');
+  background-size:cover;
+  background-repeat:no-repeat;
+  background-position:center;
+}
+
+.landing-text-inner{
+  background:rgba(0,0,0,0.6);
+  padding:5rem 3rem;
+  color:#fff;
+  display:block;
+  width:75%
+}
+.btn{
+  text-decoration:none;
+  color:#fff;
+  border:1px solid #eeeeee;
+  padding:1rem 3rem;
+  display:inline-block;
+  margin:2rem 0 0;
+  border-radius:50px;
+  transition: all 700ms ease-out;
+}
+.btn:hover{
+  background:#ccc;
+  color:#000;
+}</style>
+    <div class="landing-page">
+      <div class="landing-text-inner">
+      <h1>Genesys</h1>
+      <h3 class= "sub-title">Navigation Authentication Security </h3>
+      <a class='btn' href="">Click Here to Explore</a>
+    </div>
     </div>
 {% endblock %}

@@ -1,6 +1,34 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#id_database").change(function() {
+            var databaseId = $(this).val();
+            // Update the path based on your project structure
+            var url = "/main/get-database-schemas/?database_id=" + databaseId;
+
+            // Make an AJAX request to get the schemas based on the selected database
+            $.ajax({
+                url: url,
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    // Update the options in the schemas select field
+                    var schemasSelect = $('#id_schemas');
+                    schemasSelect.empty();
+                    $.each(data.schemas, function(index, schema) {
+                        schemasSelect.append('<option value="' + schema.id + '">' + schema.name + '</option>');
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching schemas:", error);
+                }
+            });
+        });
+    });
+</script>
   <div class="container mt-5">
     <div class="col-md-6 offset-md-3">
       <div class="card">

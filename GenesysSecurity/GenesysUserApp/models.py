@@ -1,4 +1,3 @@
-# GenesysUserApp.models.py
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from .managers import CustomUserManager
@@ -44,4 +43,3 @@ class UserDetails(AbstractBaseUser, PermissionsMixin, BaseModel):
     def __str__(self):
         return self.emp_id
 
-# Add other models as needed...
