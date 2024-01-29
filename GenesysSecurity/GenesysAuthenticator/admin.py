@@ -24,15 +24,15 @@ admin.site.register(DatabaseAccess, DatabaseAccessAdmin)
 
 class DatabasePermissionAdmin(admin.ModelAdmin):
     list_display = (
-        'user', 'database', 'granted_by', 'display_schemas', 'db_access', 'privilege_select', 'privilege_insert',
+        'user', 'database', 'granted_by', 'display_schema', 'table_alias', 'db_access', 'privilege_select', 'privilege_insert',
         'privilege_update', 'privilege_delete'
     )
     search_fields = ('user__emp_id', 'database__database_name')
 
-    def display_schemas(self, obj):
-        return ', '.join([str(schema) for schema in obj.schemas.all()])
+    def display_schema(self, obj):
+        return str(obj.schema) if obj.schema else ''
 
-    display_schemas.short_description = 'Schemas'
+    display_schema.short_description = 'Schema'
 
 
 admin.site.register(DatabasePermission, DatabasePermissionAdmin)

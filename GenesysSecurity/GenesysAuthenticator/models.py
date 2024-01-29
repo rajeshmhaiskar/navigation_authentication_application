@@ -1,6 +1,7 @@
 from django.db import models
 import jsonfield
 from GenesysUserApp.models import *
+from GenesysUserApp.constants import TABLE_ALIAS_LIST
 
 
 class BaseModel(models.Model):
@@ -42,7 +43,8 @@ class DatabasePermission(BaseModel):
     database = models.ForeignKey(MasterDatabase, on_delete=models.CASCADE, null=False, blank=False)
     granted_by = models.ForeignKey(UserDetails, on_delete=models.SET_NULL, related_name='permissions_given', null=True,
                                    blank=True)
-    schemas = models.ManyToManyField(MasterDatabaseSchema)
+    schema = models.ForeignKey(MasterDatabaseSchema, on_delete=models.CASCADE, null=False, blank=False)
+    table_alias = models.CharField(max_length=255, choices=TABLE_ALIAS_LIST, null=False, blank=False)
     db_access = models.BooleanField(default=False)
     privilege_select = models.BooleanField(default=False)
     privilege_insert = models.BooleanField(default=False)

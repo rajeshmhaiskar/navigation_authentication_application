@@ -242,6 +242,8 @@ class GrantPermissionView(View):
             user = cleaned_data['user']
             granted_by = request.user
             database_name = cleaned_data['database']
+            schemas = cleaned_data['schema']
+            table_alias = cleaned_data['table_alias']
             func_n = 'dum_func'
             db_access = cleaned_data.get('db_access', False)
             privilege_select = cleaned_data.get('privilege_select', False)
@@ -249,13 +251,9 @@ class GrantPermissionView(View):
             privilege_update = cleaned_data.get('privilege_update', False)
             privilege_delete = cleaned_data.get('privilege_delete', False)
             privilege_sequence = cleaned_data.get('privilege_sequence', False)
-            schemas = cleaned_data.get('schemas', [])
-
-            # Extract schema names from the QuerySet
-            schema_names = list(schemas.values_list('schema', flat=True))
 
             # Call the utility function to grant database privileges
-            result = grant_database_privileges(user, schema_names, database_name, func_n, db_access, privilege_select,
+            result = grant_database_privileges(user, schemas, table_alias, database_name, func_n, db_access, privilege_select,
                                                privilege_insert, privilege_update, privilege_delete,
                                                privilege_sequence)
 
@@ -263,12 +261,14 @@ class GrantPermissionView(View):
                 # Save the form data to the DatabasePermission model
                 database_permission = form.save(commit=False)
                 database_permission.granted_by = granted_by
+                database_permission.schemas = schemas
+                database_permission.table_alias = table_alias
 
                 # Save the instance to get an ID
                 database_permission.save()
 
                 # Set the selected schemas on the DatabasePermission instance
-                database_permission.schemas.set(schemas)
+                # database_permission.schemas.set(schemas)
 
                 messages.success(request, 'Database permission granted successfully.')
                 return redirect(self.success_url)

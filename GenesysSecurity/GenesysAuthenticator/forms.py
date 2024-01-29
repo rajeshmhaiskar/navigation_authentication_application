@@ -1,16 +1,18 @@
 from django import forms
 from .models import DatabasePermission, MasterDatabase, MasterDatabaseSchema, DatabaseTable, PrivilegeFunctionValidation
 from GenesysUserApp.models import *
+from GenesysUserApp.constants import TABLE_ALIAS_LIST
 
 
 class GrantPermissionForm(forms.ModelForm):
     user = forms.ModelChoiceField(queryset=UserDetails.objects.all(), required=True)
     database = forms.ModelChoiceField(queryset=MasterDatabase.objects.all(), required=True)
-    schemas = forms.ModelMultipleChoiceField(queryset=MasterDatabaseSchema.objects.all(), required=False)
+    schema = forms.ModelChoiceField(queryset=MasterDatabaseSchema.objects.all(), required=False)
+    table_alias = forms.ChoiceField(choices=TABLE_ALIAS_LIST, required=True)  # Use ChoiceField for dropdown
 
     class Meta:
         model = DatabasePermission
-        fields = ['user', 'database', 'schemas', 'db_access', 'privilege_select',
+        fields = ['user', 'database', 'schema', 'table_alias', 'db_access', 'privilege_select',
                   'privilege_insert', 'privilege_update', 'privilege_delete',
                   'privilege_sequence']
 

@@ -29,3 +29,14 @@ DESIGNATION_CHOICES = [
     (EXECUTIVE, 'Executive'),
     (TRAINEE, 'Trainee'),
 ]
+
+DASH = '-------'
+ADMIN_TABLE = 'admin_al'
+ROAD_MAP = 'road_al'
+VAL_TABLE = 'val'
+TABLE_ALIAS_LIST = [
+    (DASH, '-------'),
+    (ADMIN_TABLE, 'admin_al'),
+    (ROAD_MAP, 'road_al'),
+    (VAL_TABLE, 'val'),
+]
