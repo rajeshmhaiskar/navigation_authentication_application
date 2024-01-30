@@ -39,10 +39,10 @@ def create_user_condition_check_validations(username, password, database):
     databases_for_server2 = ["nmmc", "adas", "innomap"]
 
     # Connect to the specified database
-    if db_server == "127.0.0.1" and database.database_name in databases_for_server1:
+    if db_server == "172.16.1.1" and database.database_name in databases_for_server1:
         create_user_in_database(username, password, db_server, db_port, db_username, db_password, database)
 
-    elif db_server == "172.16.1.1" and database.database_name in databases_for_server2:
+    elif db_server == "172.16.1.2" and database.database_name in databases_for_server2:
         create_user_in_database(username, password, db_server, db_port, db_username, db_password, database)
 
 
@@ -109,7 +109,7 @@ def grant_database_privileges(user, schemas, table_alias, database_name, func_n,
         return f'Error: {e}'
 
 
-def grant_function_validation_privileges(user, schema_name, table_name, column_name, database_name):
+def grant_function_validation_privileges(user, schema, table_name, column_name, database_name):
     """
        Grants function validation privileges to the specified schema, table ,columns  in PostgresSQL.
 
@@ -145,8 +145,9 @@ def grant_function_validation_privileges(user, schema_name, table_name, column_n
         #                 [user, schema_name, table_name, column_name])
 
         procedure_name = 'valid_func'
+        schema_name = 'administrative_utility'
         cursor.callproc(f'{schema_name}.{procedure_name}',
-                        [user, schema_name, table_name, column_name])
+                        [user, schema, table_name, column_name])
 
         # Commit the changes to the database
         connection.commit()

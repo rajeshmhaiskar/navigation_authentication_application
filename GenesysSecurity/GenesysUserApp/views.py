@@ -47,7 +47,7 @@ class RegistrationView(FormView):
 
     def form_valid(self, form):
         try:
-            username = form.cleaned_data['emp_id']
+            username = form.cleaned_data['emp_id'].strip()
             password = form.cleaned_data['password2']
             selected_database_ids = self.request.POST.getlist('selected_databases', [])
             selected_databases = MasterDatabase.objects.filter(id__in=selected_database_ids)

@@ -10,7 +10,7 @@
 
         <div class="card-img-overlay d-flex justify-content-center align-items-center">
           <form method="post"  action="{% url 'grant_validation' %}" class="form" style="background-color: rgba(0, 0, 0, 0.6); padding: 20px; border-radius: 10px; color: white; text-align: center;">
-            <h2 class="text-white mb-4"><b>Grant pre-villages validation</b></h2>
+            <h2 class="text-white mb-4"><b>validation</b></h2>
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit" class="btn" style="background-color: #000; color: #fff; border: 1px solid #ccc;">validate</button> <br> <br>

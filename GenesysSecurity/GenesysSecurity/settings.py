@@ -42,7 +42,6 @@ DEFAULT_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
 
-
 ]
 
 CUSTOM_APPS = [

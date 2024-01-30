@@ -11,7 +11,7 @@ def get_data_for_server(database, databases_for_server):
     try:
         master_db = MasterDatabase.objects.get(database_name=database, is_active=True)
     except MasterDatabase.DoesNotExist:
-        raise Http404("MasterDatabase not found with the given conditions.")
+        raise Http404(f"MasterDatabase not found for database '{database}' with the given conditions.")
 
     remote_database = master_db.database_name
     remote_user = master_db.username
@@ -28,3 +28,16 @@ def get_data_for_server(database, databases_for_server):
     }
 
     return remote_database, get_remote_schemas_tables_columns(remote_db_params)
+
+
+def retrieve_and_save_data(database, server_databases):
+    if database in server_databases:
+        try:
+            remote_database, data = get_data_for_server(database, server_databases)
+            save_to_local_database(remote_database, data)
+        except MasterDatabase.DoesNotExist:
+            print(f"Error: MasterDatabase not found for database '{database}' with the given conditions.")
+        except Exception as e:
+            print(f"Error: Unable to retrieve data for database '{database}' - {e}")
+    else:
+        print(f"Error: Unsupported database '{database}'")

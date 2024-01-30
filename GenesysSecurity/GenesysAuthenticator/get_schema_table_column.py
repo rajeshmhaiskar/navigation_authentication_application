@@ -32,6 +32,9 @@ def get_remote_schemas_tables_columns(remote_db_params):
                     schema_data[schema_name] = table_data
 
         return schema_data
+    except psycopg2.Error as e:
+        print(f"PostgresSQL error: {e}")
+        return {}
     except Exception as e:
         print(f"Error: Unable to fetch remote schema, tables, and columns - {e}")
         return {}
@@ -39,17 +42,22 @@ def get_remote_schemas_tables_columns(remote_db_params):
 
 def save_to_local_database(remote_database, data):
     for schema_name, tables_data in data.items():
-        master_db, created = MasterDatabase.objects.get_or_create(database_name=remote_database)
+        try:
+            master_db, created = MasterDatabase.objects.get_or_create(database_name=remote_database)
 
-        schema_object, created = MasterDatabaseSchema.objects.get_or_create(
-            database=master_db, schema=schema_name, defaults={'is_active': True})
+            schema_object, created = MasterDatabaseSchema.objects.get_or_create(
+                database=master_db, schema=schema_name, defaults={'is_active': True})
 
-        for table_name, columns in tables_data.items():
-            table_object, created = DatabaseTable.objects.update_or_create(
-                database=master_db,
-                schema=schema_object,
-                table_name=table_name,
-                defaults={'columns': json.dumps(columns)}
-            )
+            for table_name, columns in tables_data.items():
+                table_object, created = DatabaseTable.objects.update_or_create(
+                    database=master_db,
+                    schema=schema_object,
+                    table_name=table_name,
+                    defaults={'columns': json.dumps(columns)}
+                )
 
-            print(f"Saved Table: {table_name} for Schema: {schema_name} in Database: {remote_database}")
+                print(f"Saved Table: {table_name} for Schema: {schema_name} in Database: {remote_database}")
+        except MasterDatabase.DoesNotExist:
+            print(f"Error: MasterDatabase not found for database '{remote_database}' with the given conditions.")
+        except Exception as e:
+            print(f"Error: Unable to save data for database '{remote_database}' - {e}")

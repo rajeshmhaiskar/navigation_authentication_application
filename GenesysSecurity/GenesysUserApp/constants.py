@@ -30,13 +30,48 @@ DESIGNATION_CHOICES = [
     (TRAINEE, 'Trainee'),
 ]
 
-DASH = '-------'
-ADMIN_TABLE = 'admin_al'
-ROAD_MAP = 'road_al'
-VAL_TABLE = 'val'
+
+DASH = '----------'
+STREET = 'street'
+TRAFFIC = 'traffic'
+RESTRICTION = 'restriction'
+TOLL = 'toll'
+PARKING = 'parking'
+LANDUSE = 'landuse'
+RAIL = 'rail'
+POI = 'poi'
+ADDRESS = 'address'
+HYDRO = 'hydro'
+DIVIDER = 'divider'
+BUILDINGS = 'buildings'
+ADMIN = 'admin'
+CLUSTER = 'cluster'
+PINCODE = 'pincode'
+PILLAR = 'pillar'
+GATE = 'gate'
+WATERBODIES = 'waterbodies'
+AOI = 'aoi'
+
 TABLE_ALIAS_LIST = [
-    (DASH, '-------'),
-    (ADMIN_TABLE, 'admin_al'),
-    (ROAD_MAP, 'road_al'),
-    (VAL_TABLE, 'val'),
+    (DASH, '----------'),
+    (STREET, 'street'),
+    (TRAFFIC, 'traffic'),
+    (RESTRICTION, 'restriction'),
+    (TOLL, 'toll'),
+    (PARKING, 'parking'),
+    (LANDUSE, 'landuse'),
+    (RAIL, 'rail'),
+    (POI, 'poi'),
+    (ADDRESS, 'address'),
+    (HYDRO, 'hydro'),
+    (DIVIDER, 'divider'),
+    (BUILDINGS, 'buildings'),
+    (ADMIN, 'admin'),
+    (CLUSTER, 'cluster'),
+    (PINCODE, 'pincode'),
+    (PILLAR, 'pillar'),
+    (GATE, 'gate'),
+    (WATERBODIES, 'waterbodies'),
+    (AOI, 'aoi'),
 ]
+
