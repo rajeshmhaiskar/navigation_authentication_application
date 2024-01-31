@@ -8,7 +8,7 @@ class GrantPermissionForm(forms.ModelForm):
     user = forms.ModelChoiceField(queryset=UserDetails.objects.all(), required=True)
     database = forms.ModelChoiceField(queryset=MasterDatabase.objects.all(), required=True)
     schema = forms.ModelChoiceField(queryset=MasterDatabaseSchema.objects.all(), required=False)
-    table_alias = forms.ChoiceField(choices=TABLE_ALIAS_LIST, required=True)  # Use ChoiceField for dropdown
+    table_alias = forms.ChoiceField(choices=TABLE_ALIAS_LIST, required=True)
 
     class Meta:
         model = DatabasePermission

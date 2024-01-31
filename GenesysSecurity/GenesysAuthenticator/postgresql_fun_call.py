@@ -46,7 +46,7 @@ def create_user_condition_check_validations(username, password, database):
         create_user_in_database(username, password, db_server, db_port, db_username, db_password, database)
 
 
-def grant_database_privileges(user, schemas, table_alias, database_name, func_n,
+def grant_database_privileges(user, schemas, table_alias, database_name, func_n, granted_by,
                               db_access=False, privilege_select=False, privilege_insert=False,
                               privilege_update=False, privilege_delete=False, privilege_sequence=False,
                               ):
@@ -61,6 +61,8 @@ def grant_database_privileges(user, schemas, table_alias, database_name, func_n,
 
         # Get the emp_id from the user
         user_emp_id = user.emp_id
+
+        granted_by = granted_by.emp_id
 
         schema = schemas.schema
 
@@ -94,7 +96,7 @@ def grant_database_privileges(user, schemas, table_alias, database_name, func_n,
         cursor.callproc(f'{schema_name}.{procedure_name}', [user_emp_id, db_name, func_n,
                                                             db_access, privilege_select, privilege_insert,
                                                             privilege_update, privilege_delete, privilege_sequence,
-                                                            schema, table_alias])
+                                                            schema, table_alias, granted_by])
 
         # Commit the changes to the database
         connection.commit()

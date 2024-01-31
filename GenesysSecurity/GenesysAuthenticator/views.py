@@ -24,7 +24,7 @@ class GrantPermissionView(View):
     @method_decorator(login_required)
     @method_decorator(designation_required('Senior Vice President - Projects', 'Vice President',
                                            'General Manager Projects', 'Senior Project Manager',
-                                           'Program Manager', 'Manager'))
+                                           'Program Manager', 'Team Manager', 'Manager'))
     def get(self, request, *args, **kwargs):
         form = self.form_class()
         return render(request, self.template_name, {'form': form})
@@ -32,7 +32,7 @@ class GrantPermissionView(View):
     @method_decorator(login_required)
     @method_decorator(designation_required('Senior Vice President - Projects', 'Vice President',
                                            'General Manager Projects', 'Senior Project Manager',
-                                           'Program Manager', 'Manager'))
+                                           'Program Manager', 'Team Manager', 'Manager'))
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
@@ -51,7 +51,8 @@ class GrantPermissionView(View):
             privilege_sequence = cleaned_data.get('privilege_sequence', False)
 
             # Call the utility function to grant database privileges
-            result = grant_database_privileges(user, schemas, table_alias, database_name, func_n, db_access, privilege_select,
+            result = grant_database_privileges(user, schemas, table_alias, database_name, func_n, granted_by, db_access,
+                                               privilege_select,
                                                privilege_insert, privilege_update, privilege_delete,
                                                privilege_sequence)
 
@@ -64,9 +65,6 @@ class GrantPermissionView(View):
 
                 # Save the instance to get an ID
                 database_permission.save()
-
-                # Set the selected schemas on the DatabasePermission instance
-                # database_permission.schemas.set(schemas)
 
                 messages.success(request, 'Database permission granted successfully.')
                 return redirect(self.success_url)
@@ -112,7 +110,7 @@ class GrantPrivilegesFunctionValidationView(View):
     @method_decorator(login_required)
     @method_decorator(designation_required('Senior Vice President - Projects', 'Vice President',
                                            'General Manager Projects', 'Senior Project Manager',
-                                           'Program Manager', 'Manager'))
+                                           'Program Manager', 'Team Manager', 'Manager'))
     def get(self, request, *args, **kwargs):
         all_columns = set()
         for table in DatabaseTable.objects.all():
@@ -125,7 +123,7 @@ class GrantPrivilegesFunctionValidationView(View):
     @method_decorator(login_required)
     @method_decorator(designation_required('Senior Vice President - Projects', 'Vice President',
                                            'General Manager Projects', 'Senior Project Manager',
-                                           'Program Manager', 'Manager'))
+                                           'Program Manager', 'Team Manager', 'Manager'))
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
