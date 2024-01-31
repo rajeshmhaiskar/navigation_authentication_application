@@ -19,6 +19,14 @@ class GrantPermissionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(GrantPermissionForm, self).__init__(*args, **kwargs)
 
+        # Customize the choices for the user field
+        users = UserDetails.objects.all()
+        user_choices = [(user.id, f"{user.email.split('@')[0]} ({user.emp_id})") for user in users]
+
+        # Set the empty label to display a placeholder in the dropdown
+        self.fields['user'].choices = [('', 'Select a user')] + user_choices
+        self.fields['user'].empty_label = None
+
 
 class PrivilegeFunctionValidationForm(forms.ModelForm):
     class Meta:
