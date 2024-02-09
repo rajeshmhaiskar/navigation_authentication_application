@@ -52,11 +52,10 @@ class GrantPermissionView(View):
 
             # Call the utility function to grant database privileges
             result = grant_database_privileges(user, schemas, table_alias, database_name, func_n, granted_by, db_access,
-                                               privilege_select,
-                                               privilege_insert, privilege_update, privilege_delete,
+                                               privilege_select, privilege_insert, privilege_update, privilege_delete,
                                                privilege_sequence)
 
-            if result:
+            if result and result[0][0].startswith('200'):
                 # Save the form data to the DatabasePermission model
                 database_permission = form.save(commit=False)
                 database_permission.granted_by = granted_by
@@ -69,11 +68,13 @@ class GrantPermissionView(View):
                 messages.success(request, 'Database permission granted successfully.')
                 return redirect(self.success_url)
             else:
-                messages.error(request, f"Error: {result}")
+                # Pass the error message to the form context
+                form.add_error(None, f"Error: Database permission not created. Details: {result}")
         else:
             messages.error(request, 'Error: Form is not valid.')
-        return render(request, self.template_name, {'form': form})
 
+        # Render the form with error messages
+        return render(request, self.template_name, {'form': form})
 
 @login_required
 def get_schema_table_col_from_server(request):

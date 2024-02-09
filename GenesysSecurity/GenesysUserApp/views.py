@@ -43,7 +43,6 @@ class RegistrationView(FormView):
     template_name = 'GenesysUserApp/register.html'
     form_class = RegistrationForm
     success_url = reverse_lazy('login')
-    success_message = 'Registration successful. You are now logged in.'
 
     def form_valid(self, form):
         try:
@@ -52,24 +51,36 @@ class RegistrationView(FormView):
             selected_database_ids = self.request.POST.getlist('selected_databases', [])
             selected_databases = MasterDatabase.objects.filter(id__in=selected_database_ids)
 
+            # Initialize a flag to check if any user creation failed
+            user_creation_failed = False
+
             for database in selected_databases:
-                create_user_condition_check_validations(username, password, database)
+                success, message, result_third_proc = create_user_condition_check_validations(username, password, database)
+                if not success:
+                    user_creation_failed = True
+                    messages.error(form, message)  # Show error messages on the registration form
 
-            user = form.save()
-            database_access = DatabaseAccess.objects.create(user=user)
-            database_access.databases.set(selected_databases)
+            if not user_creation_failed:
+                # If all user creations were successful, display the success message
+                messages.success(self.request, "User created successfully.")
 
-            # login(self.request, user)
+                # Save the form and redirect to the success URL
+                user = form.save()
+                database_access = DatabaseAccess.objects.create(user=user)
+                database_access.databases.set(selected_databases)
+                return redirect(self.success_url)
 
         except Exception as e:
             print(f"Error during registration: {e}")
             form.add_error(None, 'An error occurred during registration. Please try again.')
-            return self.form_invalid(form)
 
-        return super().form_valid(form)
+        # If there's any error or user creation failed, return the form_invalid response
+        return self.form_invalid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, 'Form is not valid. Please correct the errors.')
+        first_error = list(form.errors.as_data().values())[0][
+            0].message if form.errors else 'Form is not valid. Please correct the errors.'
+        messages.error(self.request, first_error)
         return super().form_invalid(form)
 
 

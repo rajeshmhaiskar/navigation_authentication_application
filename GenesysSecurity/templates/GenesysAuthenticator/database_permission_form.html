@@ -1,34 +1,6 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $("#id_database").change(function() {
-            var databaseId = $(this).val();
-            // Update the path based on your project structure
-            var url = "/main/get-database-schemas/?database_id=" + databaseId;
-
-            // Make an AJAX request to get the schemas based on the selected database
-            $.ajax({
-                url: url,
-                type: "GET",
-                dataType: "json",
-                success: function(data) {
-                    // Update the options in the schemas select field
-                    var schemasSelect = $('#id_schemas');
-                    schemasSelect.empty();
-                    $.each(data.schemas, function(index, schema) {
-                        schemasSelect.append('<option value="' + schema.id + '">' + schema.name + '</option>');
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error fetching schemas:", error);
-                }
-            });
-        });
-    });
-</script>
   <div class="container mt-5">
     <div class="col-md-6 offset-md-3">
       <div class="card">
@@ -36,11 +8,31 @@
         <img src="https://images.pexels.com/photos/1051077/pexels-photo-1051077.jpeg?auto=compress&cs=tinysrgb&w=600" class="card-img" alt="GIS Map Background" style="background-size: cover; height: 100%; width: 100%;">
 
         <div class="card-img-overlay d-flex justify-content-center align-items-center">
-          <form method="post"  enctype="multipart/form-data" class="form" style="background-color: rgba(0, 0, 0, 0.6); padding: 20px; border-radius: 10px; color: white; text-align: center;">
+          <form method="post" enctype="multipart/form-data" class="form" style="background-color: rgba(0, 0, 0, 0.6); padding: 20px; border-radius: 10px; color: white; text-align: center;">
             <h2 class="text-white mb-4"><b>Create Database Permission</b></h2>
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit" class="btn" style="background-color: #000; color: #fff; border: 1px solid #ccc;">Grant permission</button> <br> <br>
+            <div class="info warning text-black" style="background-color: #ffe0b2; border-left: 6px solid #ff9800; color: black;">
+                <p>
+                  <strong>Note:</strong>
+                </p>
+                <ul>
+                  <li><strong>To enable users to perform edit/update operations:</strong> Please select all checkboxes.</li>
+                  <li><strong>For readonly access:</strong> Select "Db access" and "Privilege select" only.</li>
+                </ul>
+            </div>
+
+             {% if result_sets %}
+              <div>
+                <h3>Result Sets:</h3>
+                <ul>
+                  {% for result_set in result_sets %}
+                    <li>{{ result_set }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
 
           </form>
         </div>

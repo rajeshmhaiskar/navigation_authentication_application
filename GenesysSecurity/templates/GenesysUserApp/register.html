@@ -11,9 +11,20 @@
           <form method="post" action="{% url 'register' %}" class="form" style="background-color: rgba(0, 0, 0, 0.6); padding: 20px; border-radius: 10px; color: white; text-align: center;">
             <h2 class="text-white mb-4"><b>Register</b></h2>
             {% csrf_token %}
+
             {{ form.as_p }}
             <button type="submit" class="btn" style="background-color: #000; color: #fff; border: 1px solid #ccc;">Register</button> <br>
             <p>If you're already registered, please <a href="{% url 'login' %}" style="color: yellow;"><b>Go to login</b></a>.</p>
+             {% if result_sets %}
+              <div>
+                <h3>Result Sets:</h3>
+                <ul>
+                  {% for result_set in result_sets %}
+                    <li>{{ result_sets }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
           </form>
         </div>
       </div>
