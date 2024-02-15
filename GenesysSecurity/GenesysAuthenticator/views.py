@@ -81,7 +81,7 @@ def get_schema_table_col_from_server(request):
     if request.method == 'POST':
 
         databases_for_server1 = ["highfidelity", "poi_core", "WoNoRoadNetwork"]
-        databases_for_server2 = ["xyz", "abcd", "db_fight"]
+        databases_for_server2 = ["highfidelity", "abcd", "db_fight"]
 
         for database in databases_for_server1:
             try:
