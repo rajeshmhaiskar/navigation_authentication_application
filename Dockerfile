@@ -1,24 +1,35 @@
-# Use an official Python runtime as a parent image
-FROM python:3.8-slim
+# Use a Python 3.10 base image
+FROM python:3.10
 
-# Set the working directory in the container
-WORKDIR /app
+# Update package lists and upgrade installed packages
+RUN apt-get update && \
+    apt-get upgrade -y
 
-# Clone the repository from GitHub
-RUN apt-get update && apt-get install -y git \
-    && git clone https://github.com/rajeshmhaiskar/navigation_authentication_application.git
+# Install git
+RUN apt-get install -y git
 
-# Change the working directory to the cloned repository
-WORKDIR /app/navigation_authentication_application
+# Clone the repository
+RUN git clone https://github.com/rajeshmhaiskar/navigation_authentication_application.git
 
-# Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r /home/Genesys/navigation_authentication_application/requirments/requirments.txt
+# Install Python virtual environment
+RUN apt-get install -y python3.10-venv
 
-# Expose port 5000 to the outside world
-EXPOSE 5000
+# Create and activate virtual environment
+RUN python3 -m venv env
+ENV PATH="/env/bin:$PATH"
 
-# Define environment variable
-ENV FLASK_APP=app.py
+# Install Python dependencies
+RUN pip install --upgrade pip
+RUN pip install psycopg2-binary testresources python-dotenv
 
-# Run app.py when the container launches
-CMD ["flask", "run", "--host=0.0.0.0"]
+# Install PostgreSQL and its dependencies
+RUN apt-get install -y postgresql postgresql-contrib libpq-dev
+
+# Start PostgreSQL service
+RUN service postgresql start
+
+# Expose PostgreSQL port
+EXPOSE 5432
+
+# Restart PostgreSQL service
+RUN service postgresql restart
