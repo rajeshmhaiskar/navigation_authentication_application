@@ -1,35 +1,37 @@
-# Use a Python 3.10 base image
-FROM python:3.10
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Update package lists and upgrade installed packages
+# Install necessary packages
 RUN apt-get update && \
-    apt-get upgrade -y
-
-# Install git
-RUN apt-get install -y git
-
-# Clone the repository
-RUN git clone https://github.com/rajeshmhaiskar/navigation_authentication_application.git
-
-# Install Python virtual environment
-RUN apt-get install -y python3.10-venv
-
-# Create and activate virtual environment
-RUN python3 -m venv env
-ENV PATH="/env/bin:$PATH"
+    apt-get install -y \
+        git \
+        python3 \
+        python3-pip \
+        python3-venv \
+        libpq-dev \
+        postgresql \
+        postgresql-contrib && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-RUN pip install --upgrade pip
-RUN pip install psycopg2-binary testresources python-dotenv
+RUN python3 -m venv /app/env && \
+    /app/env/bin/pip install --upgrade pip && \
+    /app/env/bin/pip install \
+        psycopg2-binary \
+        testresources \
+        python-dotenv \
+        psycopg2
 
-# Install PostgreSQL and its dependencies
-RUN apt-get install -y postgresql postgresql-contrib libpq-dev
-
-# Start PostgreSQL service
-RUN service postgresql start
+# Clone the repository
+RUN git clone https://github.com/rajeshmhaiskar/navigation_authentication_application.git /app/app
 
 # Expose PostgreSQL port
 EXPOSE 5432
 
-# Restart PostgreSQL service
-RUN service postgresql restart
+# Expose your application port (replace PORT_NUMBER with the actual port number your application uses)
+EXPOSE 8005
+
+# Start PostgreSQL service
+CMD service postgresql start && \
+    /bin/bash
+
